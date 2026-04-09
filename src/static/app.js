@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const signupButton = signupForm.querySelector('button[type="submit"]');
 
   function getParticipantInitials(email) {
     const username = email.split("@")[0] || "";
@@ -83,6 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const email = document.getElementById("email").value;
     const activity = document.getElementById("activity").value;
+    const defaultButtonText = signupButton.textContent;
+
+    signupButton.disabled = true;
+    signupButton.textContent = "Signing up...";
 
     try {
       const response = await fetch(
@@ -97,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
+        await fetchActivities();
         signupForm.reset();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
@@ -114,6 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
       messageDiv.className = "error";
       messageDiv.classList.remove("hidden");
       console.error("Error signing up:", error);
+    } finally {
+      signupButton.disabled = false;
+      signupButton.textContent = defaultButtonText;
     }
   });
 
